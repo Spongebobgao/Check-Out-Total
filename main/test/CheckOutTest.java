@@ -4,6 +4,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import src.CheckOut;
+import src.Product;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -46,5 +50,21 @@ public class CheckOutTest {
         assertEquals(1.8, checkOut.getItemPrice("banana", 3));
         assertEquals(4.8, checkOut.getItemPrice("banana", 5));
         assertEquals(1.8,checkOut.voidOneItem("banana",5));
+        List<Product> allPuchasedProdcuts = new ArrayList<>();
+        allPuchasedProdcuts.add(new Product("banana",1.8,0));
+        assertEquals(allPuchasedProdcuts,CheckOut.allPuchasedProducts);
+    }
+    @Test
+    void testBuyOneGetOneFree(){
+        assertEquals(2.26, checkOut.getItemPrice("soup", 1));
+        assertEquals(2.26, checkOut.getItemPrice("soup", 1));
+        assertEquals(4.52, checkOut.getItemPrice("soup", 1));
+        assertEquals(4.52, checkOut.getItemPrice("soup", 1));
+        List<Product> allPuchasedProdcuts = new ArrayList<>();
+        allPuchasedProdcuts.add(new Product("soup",2.26,0));
+        allPuchasedProdcuts.add(new Product("soup",0,0));
+        allPuchasedProdcuts.add(new Product("soup",2.26,0));
+        allPuchasedProdcuts.add(new Product("soup",0,0));
+        assertEquals(allPuchasedProdcuts,CheckOut.allPuchasedProducts);
     }
 }

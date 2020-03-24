@@ -6,6 +6,15 @@ public class Product {
     private String productName;
     private double productPrice;
     private double markdown;
+    private int[] buyNItmsGetMAtXOff;
+
+    public int[] getBuyNItmsGetMAtXOff() {
+        return buyNItmsGetMAtXOff;
+    }
+
+    public void setBuyNItmsGetMAtXOff(int[] buyNItmsGetMAtXOff) {
+        this.buyNItmsGetMAtXOff = buyNItmsGetMAtXOff;
+    }
 
     public double getMarkdown() {
         return markdown;
@@ -42,12 +51,12 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Objects.equals(productName, product.productName);
+        return productName.equals(product.productName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productName, productPrice);
+        return Objects.hash(productName);
     }
 
     @Override
