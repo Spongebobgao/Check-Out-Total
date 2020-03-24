@@ -17,7 +17,9 @@ public class CheckOut {
             int percentOfDiscount = salesInfo[2];
             long alreadyPuchasedSameItemCount = allPuchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
             //if this is true, will get the original price
-            if(alreadyPuchasedSameItemCount<4 ||(alreadyPuchasedSameItemCount%6>=0&& alreadyPuchasedSameItemCount%6 <4)){
+            if(alreadyPuchasedSameItemCount<numberOfOriginalPrice
+                    ||(alreadyPuchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice)>=0
+                        && alreadyPuchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice) <numberOfOriginalPrice)){
                 //maybe the item has markdown as well as buy N get M at X off
                 double originalPrice = alltheProductsInStore.get(productName).getProductPrice()
                         -alltheProductsInStore.get(productName).getMarkdown();
