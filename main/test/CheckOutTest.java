@@ -107,4 +107,28 @@ public class CheckOutTest {
         allPurchasedProducts.add(new Product("pasta",1,0));
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
+    @Test
+    @DisplayName("Buy 2 get 1 free, limit 12, assume only one kind of sale available")
+    void testBuyTwoGetOneFreeLimit6(){
+        assertEquals(4.2, checkOut.getItemPrice("milk", 1));
+        assertEquals(8.4, checkOut.getItemPrice("milk", 1));
+        assertEquals(8.4, checkOut.getItemPrice("milk", 1));
+        assertEquals(12.6, checkOut.getItemPrice("milk", 1));
+        assertEquals(16.8, checkOut.getItemPrice("milk", 1));
+        assertEquals(16.8, checkOut.getItemPrice("milk", 1));
+        assertEquals(21, checkOut.getItemPrice("milk", 1));
+        assertEquals(25.2, checkOut.getItemPrice("milk", 1));
+        assertEquals(29.4, checkOut.getItemPrice("milk", 1));
+        List<Product> allPurchasedProducts = new ArrayList<>();
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",0,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",0,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
+    }
 }

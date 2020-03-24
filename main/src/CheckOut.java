@@ -1,7 +1,6 @@
 package src;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CheckOut {
     public static double theTotalOfPurchasedPrice=0;
@@ -10,7 +9,7 @@ public class CheckOut {
 
     public double getItemPrice(String productName, double quantity) {
         Product onSaleProduct;
-        int[] buyNItemsGetMAtXOff = allTheProductsInStore.get(productName).getBuyNItmsGetMAtXOff();
+        int[] buyNItemsGetMAtXOff = allTheProductsInStore.get(productName).getBuyNItemsGetMAtXOff();
         long alreadyPurchasedSameItemCount = allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
         //if it's on sale will get the info for N M X (Buy N Get M at X% off)
         if(buyNItemsGetMAtXOff != null){
@@ -34,7 +33,7 @@ public class CheckOut {
             }
         }
         int[] buyNForM = allTheProductsInStore.get(productName).getBuyNForM();
-        //id this is true, the product is on sale in the form of buy N for M
+        //if this is true, the product is on sale in the form of buy N for M
         if(buyNForM != null){
             int numberOfNeededItems = buyNForM[0];
             int priceForNItems=buyNForM[1];
@@ -44,18 +43,31 @@ public class CheckOut {
                 return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
             }
             //else will reset each item price to M/N
-            else{
+            else {
                 double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
                         - allTheProductsInStore.get(productName).getMarkdown();
-                double differenceAfterApplyTheBuyNForM = originalPrice*numberOfNeededItems - priceForNItems;
-                onSaleProduct = new Product(productName,originalPrice, allTheProductsInStore.get(productName).getMarkdown());
+                double differenceAfterApplyTheBuyNForM = originalPrice * numberOfNeededItems - priceForNItems;
+                onSaleProduct = new Product(productName, originalPrice, allTheProductsInStore.get(productName).getMarkdown());
                 allPurchasedProducts.add(onSaleProduct);
                 allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName))
-                                             .forEach(product -> product.setProductPrice(priceForNItems/numberOfNeededItems));
+                        .forEach(product -> product.setProductPrice(priceForNItems / numberOfNeededItems));
                 theTotalOfPurchasedPrice += differenceAfterApplyTheBuyNForM;
-                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+                return Math.round(theTotalOfPurchasedPrice * 100.0) / 100.0;
             }
-
+        }
+        int [] buyNGetMFreeLimitX = allTheProductsInStore.get(productName).getBuyNGetMFreeLimitX();
+        //check if the buy n get m free limit x available or not
+        if(buyNGetMFreeLimitX!=null){
+            int numberOfItemsNeedToBuy = buyNGetMFreeLimitX[0];
+            int numberOfFreeItems = buyNGetMFreeLimitX[1];
+            int limitNumberOfItems = buyNGetMFreeLimitX[2];
+            if(alreadyPurchasedSameItemCount<limitNumberOfItems) {
+                if((alreadyPurchasedSameItemCount+1) % (numberOfItemsNeedToBuy+numberOfFreeItems)==0) {
+                    onSaleProduct = new Product(productName, 0, allTheProductsInStore.get(productName).getMarkdown());
+                    allPurchasedProducts.add(onSaleProduct);
+                    return Math.round(theTotalOfPurchasedPrice * 100.0) / 100.0;
+                }
+            }
         }
         return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
     }
@@ -91,10 +103,13 @@ public class CheckOut {
         Map<String,Product> allTheProductsInStore = new HashMap<>();
         allTheProductsInStore.put("soup",new Product("soup", 2.56, 0.3));
         allTheProductsInStore.put("banana",new Product("banana",0.6,0));
+        allTheProductsInStore.put("milk",new Product("milk",4.2,0));
+        allTheProductsInStore.put("potato",new Product("potato",1.6,0));
         allTheProductsInStore.put("pasta",new Product("pasta",1.2,0));
-        allTheProductsInStore.get("soup").setBuyNItmsGetMAtXOff(new int[]{1, 1, 100});
-        //allTheProductsInStore.get("pasta").setBuyNItmsGetMAtXOff(new int[]{4, 2, 50});
+        allTheProductsInStore.get("soup").setBuyNItemsGetMAtXOff(new int[]{1, 1, 100});
+        //allTheProductsInStore.get("pasta").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
         allTheProductsInStore.get("pasta").setBuyNForM(new int[]{3,3});
+        allTheProductsInStore.get("milk").setBuyNGetMFreeLimitX(new int[]{2,1,6});
         return allTheProductsInStore;
     }
 }

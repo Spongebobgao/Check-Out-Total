@@ -6,8 +6,17 @@ public class Product {
     private String productName;
     private double productPrice;
     private double markdown;
-    private int[] buyNItmsGetMAtXOff;
+    private int[] buyNItemsGetMAtXOff;
     private int[] buyNForM;
+    private int[] buyNGetMFreeLimitX;
+
+    public int[] getBuyNGetMFreeLimitX() {
+        return buyNGetMFreeLimitX;
+    }
+
+    public void setBuyNGetMFreeLimitX(int[] buyNGetMFreeLimitX) {
+        this.buyNGetMFreeLimitX = buyNGetMFreeLimitX;
+    }
 
     public int[] getBuyNForM() {
         return buyNForM;
@@ -17,12 +26,12 @@ public class Product {
         this.buyNForM = buyNForM;
     }
 
-    public int[] getBuyNItmsGetMAtXOff() {
-        return buyNItmsGetMAtXOff;
+    public int[] getBuyNItemsGetMAtXOff() {
+        return buyNItemsGetMAtXOff;
     }
 
-    public void setBuyNItmsGetMAtXOff(int[] buyNItmsGetMAtXOff) {
-        this.buyNItmsGetMAtXOff = buyNItmsGetMAtXOff;
+    public void setBuyNItemsGetMAtXOff(int[] buyNItemsGetMAtXOff) {
+        this.buyNItemsGetMAtXOff = buyNItemsGetMAtXOff;
     }
 
     public double getMarkdown() {
