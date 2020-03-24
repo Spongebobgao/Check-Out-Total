@@ -7,6 +7,15 @@ public class Product {
     private double productPrice;
     private double markdown;
     private int[] buyNItmsGetMAtXOff;
+    private int[] buyNForM;
+
+    public int[] getBuyNForM() {
+        return buyNForM;
+    }
+
+    public void setBuyNForM(int[] buyNForM) {
+        this.buyNForM = buyNForM;
+    }
 
     public int[] getBuyNItmsGetMAtXOff() {
         return buyNItmsGetMAtXOff;

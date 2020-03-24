@@ -1,76 +1,108 @@
 package src;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CheckOut {
     public static double theTotalOfPurchasedPrice=0;
-    private Map<String,Product> alltheProductsInStore = allTheProductsInStore();
-    public static List<Product> allPuchasedProducts = new ArrayList<>();
+    private Map<String,Product> allTheProductsInStore = allTheProductsInStore();
+    public static List<Product> allPurchasedProducts = new ArrayList<>();
 
     public double getItemPrice(String productName, double quantity) {
         Product onSaleProduct;
-        int[] salesInfo = alltheProductsInStore.get(productName).getBuyNItmsGetMAtXOff();
+        int[] buyNItemsGetMAtXOff = allTheProductsInStore.get(productName).getBuyNItmsGetMAtXOff();
+        long alreadyPurchasedSameItemCount = allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
         //if it's on sale will get the info for N M X (Buy N Get M at X% off)
-        if(salesInfo.length!=0){
-            int numberOfOriginalPrice = salesInfo[0];
-            int numberOfSalePrice = salesInfo[1];
-            int percentOfDiscount = salesInfo[2];
-            long alreadyPuchasedSameItemCount = allPuchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
+        if(buyNItemsGetMAtXOff != null){
+            int numberOfOriginalPrice = buyNItemsGetMAtXOff[0];
+            int numberOfSalePrice = buyNItemsGetMAtXOff[1];
+            int percentOfDiscount = buyNItemsGetMAtXOff[2];
             //if this is true, will get the original price
-            if(alreadyPuchasedSameItemCount<numberOfOriginalPrice
-                    ||(alreadyPuchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice)>=0
-                        && alreadyPuchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice) <numberOfOriginalPrice)){
+            if(alreadyPurchasedSameItemCount<numberOfOriginalPrice
+                    ||(alreadyPurchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice)>=0
+                        && alreadyPurchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice) <numberOfOriginalPrice)){
                 //maybe the item has markdown as well as buy N get M at X off
-                double originalPrice = alltheProductsInStore.get(productName).getProductPrice()
-                        -alltheProductsInStore.get(productName).getMarkdown();
-                onSaleProduct = new Product(productName,originalPrice*quantity,alltheProductsInStore.get(productName).getMarkdown()*quantity);
-                allPuchasedProducts.add(onSaleProduct);
+                double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
+                        - allTheProductsInStore.get(productName).getMarkdown();
+                onSaleProduct = new Product(productName,originalPrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
+                allPurchasedProducts.add(onSaleProduct);
                 theTotalOfPurchasedPrice += originalPrice*quantity;
                 return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
             }
             else{
-                double onSalePrice = (alltheProductsInStore.get(productName).getProductPrice()
-                        -alltheProductsInStore.get(productName).getMarkdown())*50/100;
-                onSaleProduct = new Product(productName,onSalePrice*quantity,alltheProductsInStore.get(productName).getMarkdown()*quantity);
-                allPuchasedProducts.add(onSaleProduct);
+                double onSalePrice = (allTheProductsInStore.get(productName).getProductPrice()
+                        - allTheProductsInStore.get(productName).getMarkdown())*50/100;
+                onSaleProduct = new Product(productName,onSalePrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
+                allPurchasedProducts.add(onSaleProduct);
                 theTotalOfPurchasedPrice += onSalePrice*quantity;
                 return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
             }
         }
-        double onSalePrice = alltheProductsInStore.get(productName).getProductPrice()
-                                -alltheProductsInStore.get(productName).getMarkdown();
+        int[] buyNForM = allTheProductsInStore.get(productName).getBuyNForM();
+        //id this is true, the product is on sale in the form of buy N for M
+        if(buyNForM != null){
+            int numberOfNeededItems = buyNForM[0];
+            int priceForNItems=buyNForM[1];
+            //this if statement means the number of already purchased same items is not qualified for the sale price
+            //because alreadyPurchasedSameItemCount starts from 0, so, add 1 to make the condition works as expected
+            if( alreadyPurchasedSameItemCount+1<numberOfNeededItems || ((alreadyPurchasedSameItemCount+1) % numberOfNeededItems !=0 )){
+                double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
+                        - allTheProductsInStore.get(productName).getMarkdown();
+                onSaleProduct = new Product(productName,originalPrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
+                allPurchasedProducts.add(onSaleProduct);
+                theTotalOfPurchasedPrice += originalPrice*quantity;
+                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+            }
+            //else will reset each item price to M/N
+            else{
+                double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
+                        - allTheProductsInStore.get(productName).getMarkdown();
+                double differenceAfterApplyTheBuyNForM = originalPrice*numberOfNeededItems - priceForNItems;
+                onSaleProduct = new Product(productName,originalPrice, allTheProductsInStore.get(productName).getMarkdown());
+                allPurchasedProducts.add(onSaleProduct);
+                allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName))
+                                             .forEach(product -> product.setProductPrice(priceForNItems/numberOfNeededItems));
+                theTotalOfPurchasedPrice += differenceAfterApplyTheBuyNForM;
+                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+            }
+
+        }
+        double onSalePrice = allTheProductsInStore.get(productName).getProductPrice()
+                                - allTheProductsInStore.get(productName).getMarkdown();
         onSalePrice = Math.round(onSalePrice*100.0)/100.0;
         theTotalOfPurchasedPrice += onSalePrice*quantity;
         onSaleProduct = new Product(productName,onSalePrice*quantity,
-                                alltheProductsInStore.get(productName).getMarkdown()*quantity);
-        allPuchasedProducts.add(onSaleProduct);
+                                allTheProductsInStore.get(productName).getMarkdown()*quantity);
+        allPurchasedProducts.add(onSaleProduct);
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
     }
 
 
+
     public double voidOneItem(String productName, double quantity) {
-        double voidProdcutPrice = (alltheProductsInStore.get(productName).getProductPrice()
-                                    -alltheProductsInStore.get(productName).getMarkdown())*quantity;
-        Product voidProduct = allPuchasedProducts.stream()
+        double voidProductPrice = (allTheProductsInStore.get(productName).getProductPrice()
+                                    - allTheProductsInStore.get(productName).getMarkdown())*quantity;
+        Product voidProduct = allPurchasedProducts.stream()
                                                  .filter(product->product.getProductName().equals(productName))
-                                                 .filter(product->product.getProductPrice()==voidProdcutPrice)
+                                                 .filter(product->product.getProductPrice()==voidProductPrice)
                                                  .findFirst().get();
         if(voidProduct!=null){
             theTotalOfPurchasedPrice -= voidProduct.getProductPrice();
-            allPuchasedProducts.removeIf(product->product.getProductName().equals(productName)
-                    &&product.getProductPrice()==voidProdcutPrice);
+            allPurchasedProducts.removeIf(product->product.getProductName().equals(productName)
+                    &&product.getProductPrice()==voidProductPrice);
         }
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
     }
 
 
     public  Map<String,Product> allTheProductsInStore(){
-        Map<String,Product> alltheProductsInStore = new HashMap<>();
-        alltheProductsInStore.put("soup",new Product("soup", 2.56, 0.3));
-        alltheProductsInStore.put("banana",new Product("banana",0.6,0));
-        alltheProductsInStore.put("pasta",new Product("pasta",1.2,0));
-        alltheProductsInStore.get("soup").setBuyNItmsGetMAtXOff(new int[]{1, 1, 100});
-        alltheProductsInStore.get("pasta").setBuyNItmsGetMAtXOff(new int[]{4, 2, 50});
-        return alltheProductsInStore;
+        Map<String,Product> allTheProductsInStore = new HashMap<>();
+        allTheProductsInStore.put("soup",new Product("soup", 2.56, 0.3));
+        allTheProductsInStore.put("banana",new Product("banana",0.6,0));
+        allTheProductsInStore.put("pasta",new Product("pasta",1.2,0));
+        allTheProductsInStore.get("soup").setBuyNItmsGetMAtXOff(new int[]{1, 1, 100});
+        //allTheProductsInStore.get("pasta").setBuyNItmsGetMAtXOff(new int[]{4, 2, 50});
+        allTheProductsInStore.get("pasta").setBuyNForM(new int[]{3,3});
+        return allTheProductsInStore;
     }
 }
