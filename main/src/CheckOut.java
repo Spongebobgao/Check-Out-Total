@@ -22,12 +22,7 @@ public class CheckOut {
                     ||(alreadyPurchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice)>=0
                         && alreadyPurchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice) <numberOfOriginalPrice)){
                 //maybe the item has markdown as well as buy N get M at X off
-                double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
-                        - allTheProductsInStore.get(productName).getMarkdown();
-                onSaleProduct = new Product(productName,originalPrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
-                allPurchasedProducts.add(onSaleProduct);
-                theTotalOfPurchasedPrice += originalPrice*quantity;
-                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+                return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
             }
             else{
                 double onSalePrice = (allTheProductsInStore.get(productName).getProductPrice()
@@ -46,12 +41,7 @@ public class CheckOut {
             //this if statement means the number of already purchased same items is not qualified for the sale price
             //because alreadyPurchasedSameItemCount starts from 0, so, add 1 to make the condition works as expected
             if( alreadyPurchasedSameItemCount+1<numberOfNeededItems || ((alreadyPurchasedSameItemCount+1) % numberOfNeededItems !=0 )){
-                double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
-                        - allTheProductsInStore.get(productName).getMarkdown();
-                onSaleProduct = new Product(productName,originalPrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
-                allPurchasedProducts.add(onSaleProduct);
-                theTotalOfPurchasedPrice += originalPrice*quantity;
-                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+                return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
             }
             //else will reset each item price to M/N
             else{
@@ -67,16 +57,18 @@ public class CheckOut {
             }
 
         }
-        double onSalePrice = allTheProductsInStore.get(productName).getProductPrice()
-                                - allTheProductsInStore.get(productName).getMarkdown();
-        onSalePrice = Math.round(onSalePrice*100.0)/100.0;
-        theTotalOfPurchasedPrice += onSalePrice*quantity;
-        onSaleProduct = new Product(productName,onSalePrice*quantity,
-                                allTheProductsInStore.get(productName).getMarkdown()*quantity);
-        allPurchasedProducts.add(onSaleProduct);
-        return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+        return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
     }
 
+    private static double getThePriceAfterApplyTheMarkdown(String productName, double quantity, Map<String, Product> allTheProductsInStore) {
+        Product onSaleProduct;
+        double onSalePrice = allTheProductsInStore.get(productName).getProductPrice()
+                - allTheProductsInStore.get(productName).getMarkdown();
+        onSaleProduct = new Product(productName,onSalePrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
+        allPurchasedProducts.add(onSaleProduct);
+        theTotalOfPurchasedPrice += onSalePrice*quantity;
+        return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+    }
 
 
     public double voidOneItem(String productName, double quantity) {
