@@ -35,17 +35,20 @@ public class CheckOutTest {
         assertEquals(1.8,checkOut.getItemPrice("banana",3));
     }
     @Test
+    @DisplayName("Scan one item with markdown get the current total")
     void scanOneItemWithMarkDown(){
         assertEquals(4.52, checkOut.getItemPrice("soup", 2));
         assertEquals(6.32, checkOut.getItemPrice("banana",3));
     }
     @Test
+    @DisplayName("Void one item  get the current total")
     void voidOneItemReturnTotal(){
         assertEquals(2.26, checkOut.getItemPrice("soup", 1));
         assertEquals(4.52, checkOut.getItemPrice("soup", 1));
         assertEquals(2.26,checkOut.voidOneItem("soup",1));
     }
     @Test
+    @DisplayName("Void one item with weight get the current total")
     void voidOneItemWithWeightReturnTotal(){
         assertEquals(1.8, checkOut.getItemPrice("banana", 3));
         assertEquals(4.8, checkOut.getItemPrice("banana", 5));
@@ -55,6 +58,7 @@ public class CheckOutTest {
         assertEquals(allPuchasedProdcuts,CheckOut.allPuchasedProducts);
     }
     @Test
+    @DisplayName("Scan one item imply bogo and get the current total")
     void testBuyOneGetOneFree(){
         assertEquals(2.26, checkOut.getItemPrice("soup", 1));
         assertEquals(2.26, checkOut.getItemPrice("soup", 1));
@@ -65,6 +69,26 @@ public class CheckOutTest {
         allPuchasedProdcuts.add(new Product("soup",0,0));
         allPuchasedProdcuts.add(new Product("soup",2.26,0));
         allPuchasedProdcuts.add(new Product("soup",0,0));
+        assertEquals(allPuchasedProdcuts,CheckOut.allPuchasedProducts);
+    }
+    @Test
+    @DisplayName("Expand BOGO buy 4 get 2 at 50% off")
+    void testBuyFourrGetTwoAt50PercentOff(){
+        assertEquals(1.2, checkOut.getItemPrice("pasta", 1));
+        assertEquals(2.4, checkOut.getItemPrice("pasta", 1));
+        assertEquals(3.6, checkOut.getItemPrice("pasta", 1));
+        assertEquals(4.8, checkOut.getItemPrice("pasta", 1));
+        assertEquals(5.4, checkOut.getItemPrice("pasta", 1));
+        assertEquals(6, checkOut.getItemPrice("pasta", 1));
+        assertEquals(7.2, checkOut.getItemPrice("pasta", 1));
+        List<Product> allPuchasedProdcuts = new ArrayList<>();
+        allPuchasedProdcuts.add(new Product("pasta",1.2,0));
+        allPuchasedProdcuts.add(new Product("pasta",1.2,0));
+        allPuchasedProdcuts.add(new Product("pasta",1.2,0));
+        allPuchasedProdcuts.add(new Product("pasta",1.2,0));
+        allPuchasedProdcuts.add(new Product("pasta",0.6,0));
+        allPuchasedProdcuts.add(new Product("pasta",0.6,0));
+        allPuchasedProdcuts.add(new Product("pasta",1.2,0));
         assertEquals(allPuchasedProdcuts,CheckOut.allPuchasedProducts);
     }
 }

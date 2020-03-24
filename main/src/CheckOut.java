@@ -6,13 +6,32 @@ public class CheckOut {
     public static double theTotalOfPurchasedPrice=0;
     private Map<String,Product> alltheProductsInStore = allTheProductsInStore();
     public static List<Product> allPuchasedProducts = new ArrayList<>();
+
     public double getItemPrice(String productName, double quantity) {
         Product onSaleProduct;
-        if(alltheProductsInStore.get(productName).getBuyNItmsGetMAtXOff().length!=0){
-            if(allPuchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count()%2!=0){
-                onSaleProduct = new Product(productName,0,
-                        0);
+        int[] salesInfo = alltheProductsInStore.get(productName).getBuyNItmsGetMAtXOff();
+        //if it's on sale will get the info for N M X (Buy N Get M at X% off)
+        if(salesInfo.length!=0){
+            int numberOfOriginalPrice = salesInfo[0];
+            int numberOfSalePrice = salesInfo[1];
+            int percentOfDiscount = salesInfo[2];
+            long alreadyPuchasedSameItemCount = allPuchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
+            //if this is true, will get the original price
+            if(alreadyPuchasedSameItemCount<4 ||(alreadyPuchasedSameItemCount%6>=0&& alreadyPuchasedSameItemCount%6 <4)){
+                //maybe the item has markdown as well as buy N get M at X off
+                double originalPrice = alltheProductsInStore.get(productName).getProductPrice()
+                        -alltheProductsInStore.get(productName).getMarkdown();
+                onSaleProduct = new Product(productName,originalPrice*quantity,alltheProductsInStore.get(productName).getMarkdown()*quantity);
                 allPuchasedProducts.add(onSaleProduct);
+                theTotalOfPurchasedPrice += originalPrice*quantity;
+                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+            }
+            else{
+                double onSalePrice = (alltheProductsInStore.get(productName).getProductPrice()
+                        -alltheProductsInStore.get(productName).getMarkdown())*50/100;
+                onSaleProduct = new Product(productName,onSalePrice*quantity,alltheProductsInStore.get(productName).getMarkdown()*quantity);
+                allPuchasedProducts.add(onSaleProduct);
+                theTotalOfPurchasedPrice += onSalePrice*quantity;
                 return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
             }
         }
@@ -47,7 +66,9 @@ public class CheckOut {
         Map<String,Product> alltheProductsInStore = new HashMap<>();
         alltheProductsInStore.put("soup",new Product("soup", 2.56, 0.3));
         alltheProductsInStore.put("banana",new Product("banana",0.6,0));
-        alltheProductsInStore.get("soup").setBuyNItmsGetMAtXOff(new int[]{1, 1, 1});
+        alltheProductsInStore.put("pasta",new Product("pasta",1.2,0));
+        alltheProductsInStore.get("soup").setBuyNItmsGetMAtXOff(new int[]{1, 1, 100});
+        alltheProductsInStore.get("pasta").setBuyNItmsGetMAtXOff(new int[]{4, 2, 50});
         return alltheProductsInStore;
     }
 }
