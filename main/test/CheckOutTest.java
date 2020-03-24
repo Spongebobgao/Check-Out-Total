@@ -39,6 +39,12 @@ public class CheckOutTest {
     void voidOneItemReturnTotal(){
         assertEquals(2.26, checkOut.getItemPrice("soup", 1));
         assertEquals(4.52, checkOut.getItemPrice("soup", 1));
-        assertEquals(2.26,checkOut.voidOneItem("soup"));
+        assertEquals(2.26,checkOut.voidOneItem("soup",1));
+    }
+    @Test
+    void voidOneItemWithWeightReturnTotal(){
+        assertEquals(1.8, checkOut.getItemPrice("banana", 3));
+        assertEquals(4.8, checkOut.getItemPrice("banana", 5));
+        assertEquals(1.8,checkOut.voidOneItem("banana",5));
     }
 }

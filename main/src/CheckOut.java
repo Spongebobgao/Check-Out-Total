@@ -24,11 +24,14 @@ public class CheckOut {
         return alltheProductsInStore;
     }
 
-    public double voidOneItem(String productName) {
-        Product voidProduct = allPuchasedProducts.stream().filter(product->product.getProductName().equals(productName))
+    public double voidOneItem(String productName, double quantity) {
+        double voidProdcutPrice = (alltheProductsInStore.get(productName).getProductPrice()-alltheProductsInStore.get(productName).getMarkdown())*quantity;
+        Product voidProduct = allPuchasedProducts.stream()
+                .filter(product->product.getProductName().equals(productName))
+                .filter(product->product.getProductPrice()==voidProdcutPrice)
                 .findFirst().get();
         theTotalOfPurchasedPrice -= voidProduct.getProductPrice();
-        allPuchasedProducts.remove(productName);
+        allPuchasedProducts.removeIf(product->product.getProductName().equals(productName)&&product.getProductPrice()==voidProdcutPrice);
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
     }
 }
