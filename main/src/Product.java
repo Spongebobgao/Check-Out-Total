@@ -5,10 +5,20 @@ import java.util.Objects;
 public class Product {
     private String productName;
     private double productPrice;
+    private double markdown;
 
-    public Product(String productName, double productPrice) {
+    public double getMarkdown() {
+        return markdown;
+    }
+
+    public void setMarkdown(double markdown) {
+        this.markdown = markdown;
+    }
+
+    public Product(String productName, double productPrice, double markdown) {
         this.productName = productName;
         this.productPrice = productPrice;
+        this.markdown = markdown;
     }
 
     public String getProductName() {
@@ -23,7 +33,7 @@ public class Product {
         return productPrice;
     }
 
-    public void setProductPrice(float productPrice) {
+    public void setProductPrice(double productPrice) {
         this.productPrice = productPrice;
     }
 
@@ -32,8 +42,7 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Double.compare(product.productPrice, productPrice) == 0 &&
-                Objects.equals(productName, product.productName);
+        return Objects.equals(productName, product.productName);
     }
 
     @Override

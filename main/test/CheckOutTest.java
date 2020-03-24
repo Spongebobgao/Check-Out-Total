@@ -30,4 +30,8 @@ public class CheckOutTest {
     void scanOneItemWithWeightReturnTheCurrentTotal(){
         assertEquals(1.8,checkOut.getItemPrice("banana",3));
     }
+    @Test
+    void scanOneItemWithMarkDown(){
+        assertEquals(4.52, checkOut.getItemPrice("soup", 2));
+    }
 }
