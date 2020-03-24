@@ -23,7 +23,7 @@ public class Product {
         return productPrice;
     }
 
-    public void setProductPrice(double productPrice) {
+    public void setProductPrice(float productPrice) {
         this.productPrice = productPrice;
     }
 
