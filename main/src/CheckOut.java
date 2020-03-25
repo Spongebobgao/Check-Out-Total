@@ -73,11 +73,7 @@ public class CheckOut {
         //check if the weighted products has buy n get m equal or less at x off
         int[] buyNGetMOrLessXOff = allTheProductsInStore.get(productName).getBuyNGetMOrLessXOff();
         if(buyNGetMOrLessXOff!=null){
-            int numberOfNeedWeight = buyNGetMOrLessXOff[0];
-            int numberOfSaleWeight = buyNGetMOrLessXOff[1];
-            int numberOfSaleWeightDiscount = buyNGetMOrLessXOff[2];
             //use if loop will only apply the discount one time
-            //while loop will apply multiple times
 //            if(quantity>numberOfNeedWeight){
 //                if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
 //                    onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
@@ -92,24 +88,8 @@ public class CheckOut {
 //                theTotalOfPurchasedPrice += onSalePrice;
 //                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
 //            }
-            onSalePrice = 0;
-            while(quantity>0){
-                if(quantity>numberOfNeedWeight){
-                    if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
-                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
-                        quantity = 0;
-                    }
-                    else{
-                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*numberOfNeedWeight;
-                        quantity = quantity-numberOfNeedWeight-numberOfSaleWeight;
-                    }
-                }
-                else{
-                    onSalePrice += originalPrice*quantity;
-                    quantity = 0;
-                }
-            }
-            onSaleProduct = new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
+            onSaleProduct = getTheOnSalePriceForTheWeightedItemWithBuyNGetMOrLessAtXOFF(productName,originalPrice,quantity,buyNGetMOrLessXOff,allTheProductsInStore);
+            onSalePrice = onSaleProduct.getProductPrice();
             allPurchasedProducts.add(onSaleProduct);
             theTotalOfPurchasedPrice += onSalePrice;
             return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
@@ -126,7 +106,32 @@ public class CheckOut {
         theTotalOfPurchasedPrice += originalPrice*quantity;
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
     }
+    private static Product getTheOnSalePriceForTheWeightedItemWithBuyNGetMOrLessAtXOFF(
+            String productName, double originalPrice, double quantity, int[] buyNGetMOrLessXOff, Map<String, Product> allTheProductsInStore){
+        int numberOfNeedWeight = buyNGetMOrLessXOff[0];
+        int numberOfSaleWeight = buyNGetMOrLessXOff[1];
+        int numberOfSaleWeightDiscount = buyNGetMOrLessXOff[2];
+        double onSalePrice = 0;
+        //while loop will apply discount multiple times
+        while(quantity>0){
+            if(quantity>numberOfNeedWeight){
+                if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
+                    onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
+                    quantity = 0;
+                }
+                else{
+                    onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*numberOfNeedWeight;
+                    quantity = quantity-numberOfNeedWeight-numberOfSaleWeight;
+                }
+            }
+            else{
+                onSalePrice += originalPrice*quantity;
+                quantity = 0;
+            }
+        }
+        return new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
 
+    }
 
     public double voidOneItem(String productName, double quantity) {
         Product voidProduct;
@@ -211,27 +216,8 @@ public class CheckOut {
         int[] buyNGetMOrLessXOff = allTheProductsInStore.get(productName).getBuyNGetMOrLessXOff();
         //if it's on sale we need to find the one has same weight
         if(buyNGetMOrLessXOff!=null) {
-            int numberOfNeedWeight = buyNGetMOrLessXOff[0];
-            int numberOfSaleWeight = buyNGetMOrLessXOff[1];
-            int numberOfSaleWeightDiscount = buyNGetMOrLessXOff[2];
-            double onSalePrice = 0;
-            while(quantity>0){
-                if(quantity>numberOfNeedWeight){
-                    if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
-                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
-                        quantity = 0;
-                    }
-                    else{
-                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*numberOfNeedWeight;
-                        quantity = quantity-numberOfNeedWeight-numberOfSaleWeight;
-                    }
-                }
-                else{
-                    onSalePrice += originalPrice*quantity;
-                    quantity = 0;
-                }
-            }
-            voidProduct = new Product(productName, onSalePrice,allTheProductsInStore.get(productName).getMarkdown());
+            voidProduct = getTheOnSalePriceForTheWeightedItemWithBuyNGetMOrLessAtXOFF(productName,originalPrice,quantity,buyNGetMOrLessXOff,allTheProductsInStore);
+            double onSalePrice = voidProduct.getProductPrice();
             theTotalOfPurchasedPrice -= onSalePrice;
             allPurchasedProducts.remove(voidProduct);
             return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;

@@ -6,6 +6,7 @@ public class Product {
     private String productName;
     private double productPrice;
     private double markdown;
+    private double quantity;
     private int[] buyNItemsGetMAtXOff;
     private int[] buyNForM;
     private int[] buyNGetMFreeLimitX;
@@ -51,6 +52,13 @@ public class Product {
         this.markdown = markdown;
     }
 
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
     public Product(String productName, double productPrice, double markdown) {
         this.productName = productName;
         this.productPrice = productPrice;
