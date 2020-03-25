@@ -9,6 +9,15 @@ public class Product {
     private int[] buyNItemsGetMAtXOff;
     private int[] buyNForM;
     private int[] buyNGetMFreeLimitX;
+    private int[] buyNGetMOrLessXOff;
+
+    public int[] getBuyNGetMOrLessXOff() {
+        return buyNGetMOrLessXOff;
+    }
+
+    public void setBuyNGetMOrLessXOff(int[] buyNGetMOrLessXOff) {
+        this.buyNGetMOrLessXOff = buyNGetMOrLessXOff;
+    }
 
     public int[] getBuyNGetMFreeLimitX() {
         return buyNGetMFreeLimitX;

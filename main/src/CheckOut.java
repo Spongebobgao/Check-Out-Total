@@ -1,8 +1,6 @@
 package src;
 
-import javax.swing.text.html.Option;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CheckOut {
     public static double theTotalOfPurchasedPrice=0;
@@ -71,6 +69,25 @@ public class CheckOut {
                     allPurchasedProducts.add(onSaleProduct);
                     return Math.round(theTotalOfPurchasedPrice * 100.0) / 100.0;
                 }
+            }
+        }
+        //check if the weighted products has buy n get m equal or less at x off
+        int[] buyNGetMOrLessXOff = allTheProductsInStore.get(productName).getBuyNGetMOrLessXOff();
+        if(buyNGetMOrLessXOff!=null){
+            int numberOfNeedWeight = buyNGetMOrLessXOff[0];
+            int numberOfSaleWeight = buyNGetMOrLessXOff[1];
+            int numberOfSaleWeightDiscount = buyNGetMOrLessXOff[2];
+            if(quantity>numberOfNeedWeight){
+                if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
+                    onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
+                }
+                else{
+                    onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*(quantity-numberOfSaleWeight);
+                }
+                onSaleProduct = new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
+                allPurchasedProducts.add(onSaleProduct);
+                theTotalOfPurchasedPrice += onSalePrice;
+                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
             }
         }
         return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
@@ -150,6 +167,7 @@ public class CheckOut {
             }
         }
         int[] buyNGetMFreeLimitX = allTheProductsInStore.get(productName).getBuyNGetMFreeLimitX();
+        //check if the void item has buy n get m free limit x special
         if(buyNGetMFreeLimitX!=null){
             int numberOfItemsNeedToBuy = buyNGetMFreeLimitX[0];
             int numberOfFreeItems = buyNGetMFreeLimitX[1];
@@ -191,6 +209,7 @@ public class CheckOut {
         //allTheProductsInStore.get("milk").setBuyNGetMFreeLimitX(new int[]{2,1,6});
         allTheProductsInStore.get("milk").setBuyNGetMFreeLimitX(new int[]{3,1,8});
         allTheProductsInStore.get("rice").setBuyNForM(new int[]{3,20});
+        allTheProductsInStore.get("banana").setBuyNGetMOrLessXOff(new int[]{3, 2, 50});
         return allTheProductsInStore;
     }
 }

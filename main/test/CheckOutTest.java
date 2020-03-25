@@ -190,4 +190,13 @@ public class CheckOutTest {
         allPurchasedProducts.add(new Product("milk",0,0));
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
+    @Test
+    @DisplayName("Buy N, get M of equal or lesser value for X% off for weighted item, test with buy 3 pound get 2 pound 50% off")
+    void scanOneWeightedItemWithBuyNGetMOrLessAtXoff(){
+        assertEquals(2.52, checkOut.getItemPrice("banana", 5.2));
+        assertEquals(4.08, checkOut.getItemPrice("banana", 2.6));
+        allPurchasedProducts.add(new Product("banana",2.52,0));
+        allPurchasedProducts.add(new Product("banana",1.56,0));
+        assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
+    }
 }
