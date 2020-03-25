@@ -207,6 +207,36 @@ public class CheckOut {
             }
 
         }
+        //check if the void item has buy n get m or less at x% off
+        int[] buyNGetMOrLessXOff = allTheProductsInStore.get(productName).getBuyNGetMOrLessXOff();
+        //if it's on sale we need to find the one has same weight
+        if(buyNGetMOrLessXOff!=null) {
+            int numberOfNeedWeight = buyNGetMOrLessXOff[0];
+            int numberOfSaleWeight = buyNGetMOrLessXOff[1];
+            int numberOfSaleWeightDiscount = buyNGetMOrLessXOff[2];
+            double onSalePrice = 0;
+            while(quantity>0){
+                if(quantity>numberOfNeedWeight){
+                    if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
+                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
+                        quantity = 0;
+                    }
+                    else{
+                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*numberOfNeedWeight;
+                        quantity = quantity-numberOfNeedWeight-numberOfSaleWeight;
+                    }
+                }
+                else{
+                    onSalePrice += originalPrice*quantity;
+                    quantity = 0;
+                }
+            }
+            voidProduct = new Product(productName, onSalePrice,allTheProductsInStore.get(productName).getMarkdown());
+            theTotalOfPurchasedPrice -= onSalePrice;
+            allPurchasedProducts.remove(voidProduct);
+            return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+
+        }
         if(possibleProductToDeleteWithOriginalPrice.isPresent()){
             voidProduct = possibleProductToDeleteWithOriginalPrice.get();
             theTotalOfPurchasedPrice -= voidProduct.getProductPrice();
