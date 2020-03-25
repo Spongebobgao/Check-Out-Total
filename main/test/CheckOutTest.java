@@ -129,7 +129,7 @@ public class CheckOutTest {
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
     @Test
-    @DisplayName("Void one item with the special buy n get m at x%off, test with buy 4 get 2 50% off")
+    @DisplayName("Void one item with the special buy n get m at x% off, test with buy 4 get 2 50% off")
     void voidOneItemWithBuyNGetMAtXPercentOff(){
         assertEquals(3, checkOut.getItemPrice("egg", 1));
         assertEquals(6, checkOut.getItemPrice("egg", 1));
@@ -146,6 +146,22 @@ public class CheckOutTest {
         allPurchasedProducts.add(new Product("egg",3,0));
         allPurchasedProducts.add(new Product("egg",3,0));
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
-
+    }
+    @Test
+    @DisplayName("void one item that has buy n for m special, test with buy 3 for 20")
+    void voidOneItemWithBuyNForMSale(){
+        assertEquals(9.99, checkOut.getItemPrice("rice", 1));
+        assertEquals(19.98, checkOut.getItemPrice("rice", 1));
+        assertEquals(20, checkOut.getItemPrice("rice", 1));
+        assertEquals(29.99, checkOut.getItemPrice("rice", 1));
+        assertEquals(39.98, checkOut.getItemPrice("rice", 1));
+        assertEquals(40, checkOut.getItemPrice("rice", 1));
+        assertEquals(39.98, checkOut.voidOneItem("rice",1));
+        assertEquals(29.99, checkOut.voidOneItem("rice",1));
+        allPurchasedProducts.add(new Product("rice",6.67,0));
+        allPurchasedProducts.add(new Product("rice",6.67,0));
+        allPurchasedProducts.add(new Product("rice",6.67,0));
+        allPurchasedProducts.add(new Product("rice",9.99,0));
+        assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
 }
