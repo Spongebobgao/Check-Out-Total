@@ -78,11 +78,11 @@ public class CheckOut {
 
     private static double getThePriceAfterApplyTheMarkdown(String productName, double quantity, Map<String, Product> allTheProductsInStore) {
         Product onSaleProduct;
-        double onSalePrice = allTheProductsInStore.get(productName).getProductPrice()
+        double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
                 - allTheProductsInStore.get(productName).getMarkdown();
-        onSaleProduct = new Product(productName,onSalePrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
+        onSaleProduct = new Product(productName,originalPrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
         allPurchasedProducts.add(onSaleProduct);
-        theTotalOfPurchasedPrice += onSalePrice*quantity;
+        theTotalOfPurchasedPrice += originalPrice*quantity;
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
     }
 
@@ -99,6 +99,7 @@ public class CheckOut {
         Optional<Product> possibleProductToDeleteWithOnSalePrice;
         long alreadyPurchasedSameItemCount = allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
         int[] buyNItemsGetMAtXOff = allTheProductsInStore.get(productName).getBuyNItemsGetMAtXOff();
+        //check if the product has buy n get m at x off sale
         if(buyNItemsGetMAtXOff!=null){
             int numberOfOriginalPrice = buyNItemsGetMAtXOff[0];
             int numberOfSalePrice = buyNItemsGetMAtXOff[1];
@@ -121,6 +122,7 @@ public class CheckOut {
             }
         }
         int [] buyNForM = allTheProductsInStore.get(productName).getBuyNForM();
+        //check if the product has buy n for m special
         if(buyNForM!=null){
             int numberOfNeededItems = buyNForM[0];
             int priceForNItems=buyNForM[1];
@@ -147,6 +149,23 @@ public class CheckOut {
                 return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
             }
         }
+        int[] buyNGetMFreeLimitX = allTheProductsInStore.get(productName).getBuyNGetMFreeLimitX();
+        if(buyNGetMFreeLimitX!=null){
+            int numberOfItemsNeedToBuy = buyNGetMFreeLimitX[0];
+            int numberOfFreeItems = buyNGetMFreeLimitX[1];
+            int limitNumberOfItems = buyNGetMFreeLimitX[2];
+            if(alreadyPurchasedSameItemCount % (numberOfFreeItems + numberOfItemsNeedToBuy) ==0
+                                           && alreadyPurchasedSameItemCount <=limitNumberOfItems){
+                possibleProductToDeleteWithOnSalePrice = allPurchasedProducts.stream()
+                                                        .filter(product -> product.getProductName().equals(productName))
+                                                        .filter(product -> product.getProductPrice()==0)
+                                                        .findFirst();
+                if(possibleProductToDeleteWithOnSalePrice.isPresent())
+                    allPurchasedProducts.remove(possibleProductToDeleteWithOnSalePrice.get());
+                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+            }
+
+        }
         if(possibleProductToDeleteWithOriginalPrice.isPresent()){
             voidProduct = possibleProductToDeleteWithOriginalPrice.get();
             theTotalOfPurchasedPrice -= voidProduct.getProductPrice();
@@ -169,7 +188,8 @@ public class CheckOut {
         //allTheProductsInStore.get("pasta").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
         allTheProductsInStore.get("egg").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
         allTheProductsInStore.get("pasta").setBuyNForM(new int[]{3,3});
-        allTheProductsInStore.get("milk").setBuyNGetMFreeLimitX(new int[]{2,1,6});
+        //allTheProductsInStore.get("milk").setBuyNGetMFreeLimitX(new int[]{2,1,6});
+        allTheProductsInStore.get("milk").setBuyNGetMFreeLimitX(new int[]{3,1,8});
         allTheProductsInStore.get("rice").setBuyNForM(new int[]{3,20});
         return allTheProductsInStore;
     }

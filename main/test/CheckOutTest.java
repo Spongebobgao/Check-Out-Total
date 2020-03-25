@@ -164,4 +164,30 @@ public class CheckOutTest {
         allPurchasedProducts.add(new Product("rice",9.99,0));
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
+    @Test
+    @DisplayName("void one item has buy n get m free limit x and invalidate the special, test with buy 3 get 1 free limit 9")
+    void voidOneItemWithBuyNGetMFreeAndInvalidateSale(){
+        assertEquals(4.2, checkOut.getItemPrice("milk", 1));
+        assertEquals(8.4, checkOut.getItemPrice("milk", 1));
+        assertEquals(12.6, checkOut.getItemPrice("milk", 1));
+        assertEquals(12.6, checkOut.getItemPrice("milk", 1));
+
+        assertEquals(16.8, checkOut.getItemPrice("milk", 1));
+        assertEquals(21, checkOut.getItemPrice("milk", 1));
+        assertEquals(25.2, checkOut.getItemPrice("milk", 1));
+        assertEquals(25.2, checkOut.getItemPrice("milk", 1));
+
+        assertEquals(29.4, checkOut.getItemPrice("milk", 1));
+
+        assertEquals(25.2, checkOut.voidOneItem("milk", 1));
+        assertEquals(25.2, checkOut.voidOneItem("milk", 1));
+        assertEquals(21, checkOut.voidOneItem("milk", 1));
+        assertEquals(16.8, checkOut.voidOneItem("milk", 1));
+        assertEquals(12.6, checkOut.voidOneItem("milk", 1));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",4.2,0));
+        allPurchasedProducts.add(new Product("milk",0,0));
+        assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
+    }
 }
