@@ -211,7 +211,7 @@ public class CheckOutTest {
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
     @Test
-    @DisplayName("Buy N, get M of equal or lesser value for X% off for weighted item, test with buy 3 pound get 2 pound 50% off")
+    @DisplayName("void Buy N, get M of equal or lesser value for X% off for weighted item, test with buy 3 pound get 2 pound 50% off")
     void voidOneWeightedItemWithBuyNGetMOrLessAtXOff(){
         assertEquals(2.52, checkOut.getItemPrice("banana", 5.2));
         assertEquals(4.08, checkOut.getItemPrice("banana", 2.6));
@@ -220,5 +220,63 @@ public class CheckOutTest {
         allPurchasedProducts.add(new Product("banana",1.56,0));
         allPurchasedProducts.add(new Product("banana",5.76,0));
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
+    }
+    @Test
+    @DisplayName("wild test for everything")
+    void testGetItemPriceAndVoidOneItemUseDifferenceSaleSpecial(){
+        assertEquals(2.26, checkOut.getItemPrice("soup",1));
+        assertEquals(4.52, checkOut.getItemPrice("soup",1));
+
+        assertEquals(5.72, checkOut.getItemPrice("pasta",1));
+        assertEquals(6.92, checkOut.getItemPrice("pasta", 1));
+
+        assertEquals(9.92, checkOut.getItemPrice("egg",1));
+        assertEquals(12.92, checkOut.getItemPrice("egg",1));
+        assertEquals(15.92, checkOut.getItemPrice("egg",1));
+        assertEquals(18.92, checkOut.getItemPrice("egg", 1));
+
+        assertEquals(20.42, checkOut.getItemPrice("egg",1));
+        assertEquals(21.92, checkOut.getItemPrice("egg",1));
+        assertEquals(24.92, checkOut.getItemPrice("egg", 1));
+
+        assertEquals(29.12, checkOut.getItemPrice("milk",1));
+        assertEquals(33.32, checkOut.getItemPrice("milk",1));
+        assertEquals(37.52, checkOut.getItemPrice("milk", 1));
+        assertEquals(37.52, checkOut.getItemPrice("milk",1));
+
+        assertEquals(41.72, checkOut.getItemPrice("milk",1));
+        assertEquals(45.92, checkOut.getItemPrice("milk", 1));
+        assertEquals(50.12, checkOut.getItemPrice("milk",1));
+        assertEquals(50.12, checkOut.getItemPrice("milk",1));
+
+        assertEquals(54.32, checkOut.getItemPrice("milk", 1));
+
+        assertEquals(64.31, checkOut.getItemPrice("rice",1));
+        assertEquals(74.3, checkOut.getItemPrice("rice",1));
+        assertEquals(74.32, checkOut.getItemPrice("rice", 1));
+
+        assertEquals(84.31, checkOut.getItemPrice("rice",1));
+        assertEquals(94.3, checkOut.getItemPrice("rice", 1));
+        assertEquals(94.32, checkOut.getItemPrice("rice",1));
+
+        assertEquals(104.31, checkOut.getItemPrice("rice", 1));
+
+        assertEquals(105.87, checkOut.getItemPrice("banana", 2.6));
+        assertEquals(111.63, checkOut.getItemPrice("banana", 11.6));
+
+        assertEquals(109.37, checkOut.voidOneItem("soup",1));
+        assertEquals(108.17, checkOut.voidOneItem("pasta",1));
+
+        assertEquals(105.17, checkOut.voidOneItem("egg",1));
+        assertEquals(103.67, checkOut.voidOneItem("egg",1));
+        assertEquals(102.17, checkOut.voidOneItem("egg",1));
+
+        assertEquals(97.97, checkOut.voidOneItem("milk",1));
+        assertEquals(97.97, checkOut.voidOneItem("milk",1));
+
+        assertEquals(87.98, checkOut.voidOneItem("rice",1));
+        assertEquals(87.96, checkOut.voidOneItem("rice",1));
+
+        assertEquals(82.2, checkOut.voidOneItem("banana",11.6));
     }
 }

@@ -24,7 +24,7 @@ public class CheckOut {
                     ||(alreadyPurchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice)>=0
                         && alreadyPurchasedSameItemCount % (numberOfOriginalPrice+numberOfSalePrice) <numberOfOriginalPrice)){
                 //maybe the item has markdown as well as buy N get M at X off
-                return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
+                return getThePriceAfterApplyTheMarkdown(productName, quantity, originalPrice, allTheProductsInStore);
             }
             else{
                 onSalePrice = originalPrice-originalPrice*percentOfDiscount/100.0;
@@ -42,7 +42,7 @@ public class CheckOut {
             //this if statement means the number of already purchased same items is not qualified for the sale price
             //because alreadyPurchasedSameItemCount starts from 0, so, add 1 to make the condition works as expected
             if( alreadyPurchasedSameItemCount+1<numberOfNeededItems || ((alreadyPurchasedSameItemCount+1) % numberOfNeededItems !=0 )){
-                return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
+                return getThePriceAfterApplyTheMarkdown(productName, quantity, originalPrice, allTheProductsInStore);
             }
             //else will reset each item price to M/N
             else {
@@ -94,13 +94,11 @@ public class CheckOut {
             theTotalOfPurchasedPrice += onSalePrice;
             return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
         }
-        return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
+        return getThePriceAfterApplyTheMarkdown(productName, quantity,originalPrice, allTheProductsInStore);
     }
 
-    private static double getThePriceAfterApplyTheMarkdown(String productName, double quantity, Map<String, Product> allTheProductsInStore) {
+    private static double getThePriceAfterApplyTheMarkdown(String productName, double quantity, double originalPrice, Map<String, Product> allTheProductsInStore) {
         Product onSaleProduct;
-        double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
-                - allTheProductsInStore.get(productName).getMarkdown();
         onSaleProduct = new Product(quantity,productName,originalPrice*quantity);
         allPurchasedProducts.add(onSaleProduct);
         theTotalOfPurchasedPrice += originalPrice*quantity;
@@ -241,7 +239,8 @@ public class CheckOut {
         allTheProductsInStore.put("egg",new Product("egg",3.9,0.9));
         allTheProductsInStore.put("pasta",new Product("pasta",1.2,0));
         allTheProductsInStore.put("rice",new Product("rice",9.99,0));
-        allTheProductsInStore.get("soup").setBuyNItemsGetMAtXOff(new int[]{1, 1, 100});
+        //allTheProductsInStore.get("soup").setBuyNItemsGetMAtXOff(new int[]{1, 1, 100});
+        allTheProductsInStore.get("soup").setBuyNItemsGetMAtXOff(new int[]{1, 1, 0});
         //allTheProductsInStore.get("pasta").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
         allTheProductsInStore.get("egg").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
         allTheProductsInStore.get("pasta").setBuyNForM(new int[]{3,3});
