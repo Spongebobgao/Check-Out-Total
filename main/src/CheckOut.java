@@ -132,6 +132,8 @@ public class CheckOut {
     }
 
     public double voidOneItem(String productName, double quantity) {
+        if(allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count()==0)
+            return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
         Product voidProduct;
         //the original price with or without markdown
         double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
@@ -227,6 +229,7 @@ public class CheckOut {
             allPurchasedProducts.remove(voidProduct);
             return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
         }
+        System.out.println(Math.round(theTotalOfPurchasedPrice*100.0)/100.0);
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
     }
 
