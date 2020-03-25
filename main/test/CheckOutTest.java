@@ -14,9 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CheckOutTest {
 
     CheckOut checkOut;
+    List<Product> allPurchasedProducts;
     @BeforeEach
-    void setCheckOut(){
+    void setCheckOutAndList(){
         checkOut = new CheckOut();
+        allPurchasedProducts = new ArrayList<>();
     }
     @Test
     @DisplayName("Scan one item get the price")
@@ -53,7 +55,6 @@ public class CheckOutTest {
         assertEquals(1.8, checkOut.getItemPrice("banana", 3));
         assertEquals(4.8, checkOut.getItemPrice("banana", 5));
         assertEquals(1.8,checkOut.voidOneItem("banana",5));
-        List<Product> allPurchasedProducts = new ArrayList<>();
         allPurchasedProducts.add(new Product("banana",1.8,0));
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
@@ -64,7 +65,6 @@ public class CheckOutTest {
         assertEquals(2.26, checkOut.getItemPrice("soup", 1));
         assertEquals(4.52, checkOut.getItemPrice("soup", 1));
         assertEquals(4.52, checkOut.getItemPrice("soup", 1));
-        List<Product> allPurchasedProducts = new ArrayList<>();
         allPurchasedProducts.add(new Product("soup",2.26,0));
         allPurchasedProducts.add(new Product("soup",0,0));
         allPurchasedProducts.add(new Product("soup",2.26,0));
@@ -81,7 +81,6 @@ public class CheckOutTest {
         assertEquals(5.4, checkOut.getItemPrice("pasta", 1));
         assertEquals(6, checkOut.getItemPrice("pasta", 1));
         assertEquals(7.2, checkOut.getItemPrice("pasta", 1));
-        List<Product> allPurchasedProducts = new ArrayList<>();
         allPurchasedProducts.add(new Product("pasta",1.2,0));
         allPurchasedProducts.add(new Product("pasta",1.2,0));
         allPurchasedProducts.add(new Product("pasta",1.2,0));
@@ -99,7 +98,6 @@ public class CheckOutTest {
         assertEquals(3, checkOut.getItemPrice("pasta", 1));
         assertEquals(4.2, checkOut.getItemPrice("pasta", 1));
         assertEquals(5.4, checkOut.getItemPrice("pasta", 1));
-        List<Product> allPurchasedProducts = new ArrayList<>();
         allPurchasedProducts.add(new Product("pasta",1,0));
         allPurchasedProducts.add(new Product("pasta",1,0));
         allPurchasedProducts.add(new Product("pasta",1,0));
@@ -108,7 +106,7 @@ public class CheckOutTest {
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
     }
     @Test
-    @DisplayName("Buy 2 get 1 free, limit 12, assume only one kind of sale available")
+    @DisplayName("Buy 2 get 1 free, limit 6, assume only one kind of sale available")
     void testBuyTwoGetOneFreeLimit6(){
         assertEquals(4.2, checkOut.getItemPrice("milk", 1));
         assertEquals(8.4, checkOut.getItemPrice("milk", 1));
@@ -119,7 +117,6 @@ public class CheckOutTest {
         assertEquals(21, checkOut.getItemPrice("milk", 1));
         assertEquals(25.2, checkOut.getItemPrice("milk", 1));
         assertEquals(29.4, checkOut.getItemPrice("milk", 1));
-        List<Product> allPurchasedProducts = new ArrayList<>();
         allPurchasedProducts.add(new Product("milk",4.2,0));
         allPurchasedProducts.add(new Product("milk",4.2,0));
         allPurchasedProducts.add(new Product("milk",0,0));
@@ -130,5 +127,25 @@ public class CheckOutTest {
         allPurchasedProducts.add(new Product("milk",4.2,0));
         allPurchasedProducts.add(new Product("milk",4.2,0));
         assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
+    }
+    @Test
+    @DisplayName("Void one item with the special buy n get m at x%off, test with buy 4 get 2 50% off")
+    void voidOneItemWithBuyNGetMAtXPercentOff(){
+        assertEquals(3, checkOut.getItemPrice("egg", 1));
+        assertEquals(6, checkOut.getItemPrice("egg", 1));
+        assertEquals(9, checkOut.getItemPrice("egg", 1));
+        assertEquals(12, checkOut.getItemPrice("egg", 1));
+        assertEquals(13.5, checkOut.getItemPrice("egg", 1));
+        assertEquals(15, checkOut.getItemPrice("egg", 1));
+        assertEquals(18, checkOut.getItemPrice("egg", 1));
+        assertEquals(15, checkOut.voidOneItem("egg",1));
+        assertEquals(13.5, checkOut.voidOneItem("egg",1));
+        assertEquals(12, checkOut.voidOneItem("egg",1));
+        allPurchasedProducts.add(new Product("egg",3,0));
+        allPurchasedProducts.add(new Product("egg",3,0));
+        allPurchasedProducts.add(new Product("egg",3,0));
+        allPurchasedProducts.add(new Product("egg",3,0));
+        assertEquals(allPurchasedProducts,CheckOut.allPurchasedProducts);
+
     }
 }

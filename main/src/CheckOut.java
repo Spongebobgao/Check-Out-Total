@@ -1,6 +1,8 @@
 package src;
 
+import javax.swing.text.html.Option;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CheckOut {
     public static double theTotalOfPurchasedPrice=0;
@@ -25,7 +27,7 @@ public class CheckOut {
             }
             else{
                 double onSalePrice = (allTheProductsInStore.get(productName).getProductPrice()
-                        - allTheProductsInStore.get(productName).getMarkdown())*50/100;
+                        - allTheProductsInStore.get(productName).getMarkdown())*percentOfDiscount/100;
                 onSaleProduct = new Product(productName,onSalePrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
                 allPurchasedProducts.add(onSaleProduct);
                 theTotalOfPurchasedPrice += onSalePrice*quantity;
@@ -84,16 +86,41 @@ public class CheckOut {
 
 
     public double voidOneItem(String productName, double quantity) {
-        double voidProductPrice = (allTheProductsInStore.get(productName).getProductPrice()
-                                    - allTheProductsInStore.get(productName).getMarkdown())*quantity;
-        Product voidProduct = allPurchasedProducts.stream()
-                                                 .filter(product->product.getProductName().equals(productName))
-                                                 .filter(product->product.getProductPrice()==voidProductPrice)
-                                                 .findFirst().get();
-        if(voidProduct!=null){
+        Product voidProduct;
+        Optional<Product> possibleProductToDelete;
+        long alreadyPurchasedSameItemCount = allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
+        int[] buyNItemsGetMAtXOff = allTheProductsInStore.get(productName).getBuyNItemsGetMAtXOff();
+        if(buyNItemsGetMAtXOff!=null){
+            int numberOfOriginalPrice = buyNItemsGetMAtXOff[0];
+            int numberOfSalePrice = buyNItemsGetMAtXOff[1];
+            int percentOfDiscount = buyNItemsGetMAtXOff[2];
+            double onSalePrice = (allTheProductsInStore.get(productName).getProductPrice()
+                    - allTheProductsInStore.get(productName).getMarkdown())*percentOfDiscount/100;
+            //if this is true will delete the one applied discount first
+            if(alreadyPurchasedSameItemCount<=(numberOfOriginalPrice+numberOfSalePrice)
+                    &&alreadyPurchasedSameItemCount>numberOfOriginalPrice){
+                 possibleProductToDelete =allPurchasedProducts.stream()
+                        .filter(product->product.getProductName().equals(productName))
+                        .filter(product->product.getProductPrice()==onSalePrice)
+                        .findFirst();
+                 if(possibleProductToDelete.isPresent()){
+                     voidProduct = possibleProductToDelete.get();
+                     theTotalOfPurchasedPrice -= voidProduct.getProductPrice();
+                     allPurchasedProducts.remove(voidProduct);
+                     return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+                 }
+            }
+        }
+        double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
+                                 - allTheProductsInStore.get(productName).getMarkdown();
+        possibleProductToDelete = allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName))
+                .filter(product -> product.getProductPrice()==originalPrice)
+                .findFirst();
+        if(possibleProductToDelete.isPresent()){
+            voidProduct = possibleProductToDelete.get();
             theTotalOfPurchasedPrice -= voidProduct.getProductPrice();
-            allPurchasedProducts.removeIf(product->product.getProductName().equals(productName)
-                    &&product.getProductPrice()==voidProductPrice);
+            allPurchasedProducts.remove(voidProduct);
+            return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
         }
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
     }
@@ -104,11 +131,12 @@ public class CheckOut {
         allTheProductsInStore.put("soup",new Product("soup", 2.56, 0.3));
         allTheProductsInStore.put("banana",new Product("banana",0.6,0));
         allTheProductsInStore.put("milk",new Product("milk",4.2,0));
-        allTheProductsInStore.put("potato",new Product("potato",1.6,0));
+        allTheProductsInStore.put("egg",new Product("egg",3.9,0.9));
         allTheProductsInStore.put("pasta",new Product("pasta",1.2,0));
         allTheProductsInStore.get("soup").setBuyNItemsGetMAtXOff(new int[]{1, 1, 100});
-        //allTheProductsInStore.get("pasta").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
-        allTheProductsInStore.get("pasta").setBuyNForM(new int[]{3,3});
+        allTheProductsInStore.get("pasta").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
+        allTheProductsInStore.get("egg").setBuyNItemsGetMAtXOff(new int[]{4, 2, 50});
+        //allTheProductsInStore.get("pasta").setBuyNForM(new int[]{3,3});
         allTheProductsInStore.get("milk").setBuyNGetMFreeLimitX(new int[]{2,1,6});
         return allTheProductsInStore;
     }
