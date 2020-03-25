@@ -27,8 +27,7 @@ public class CheckOut {
                 return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
             }
             else{
-                onSalePrice = (allTheProductsInStore.get(productName).getProductPrice()
-                        - allTheProductsInStore.get(productName).getMarkdown())*percentOfDiscount/100;
+                onSalePrice = originalPrice-originalPrice*percentOfDiscount/100.0;
                 onSaleProduct = new Product(productName,onSalePrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
                 allPurchasedProducts.add(onSaleProduct);
                 theTotalOfPurchasedPrice += onSalePrice*quantity;
@@ -50,9 +49,9 @@ public class CheckOut {
                 double differenceAfterApplyTheBuyNForM = priceForNItems - originalPrice*(numberOfNeededItems-1);
                 onSaleProduct = new Product(productName, originalPrice, allTheProductsInStore.get(productName).getMarkdown());
                 allPurchasedProducts.add(onSaleProduct);
-                onSalePrice = (double)priceForNItems / (double)numberOfNeededItems;
+                double salePrice = Math.round((double)priceForNItems / (double)numberOfNeededItems*100.0)/100.0;
                 allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName))
-                        .forEach(product -> product.setProductPrice(Math.round(onSalePrice*100.0)/100.0));
+                        .forEach(product -> product.setProductPrice(salePrice));
                 theTotalOfPurchasedPrice += differenceAfterApplyTheBuyNForM;
                 return Math.round(theTotalOfPurchasedPrice * 100.0) / 100.0;
             }
@@ -77,18 +76,43 @@ public class CheckOut {
             int numberOfNeedWeight = buyNGetMOrLessXOff[0];
             int numberOfSaleWeight = buyNGetMOrLessXOff[1];
             int numberOfSaleWeightDiscount = buyNGetMOrLessXOff[2];
-            if(quantity>numberOfNeedWeight){
-                if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
-                    onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
+            //use if loop will only apply the discount one time
+            //while loop will apply multiple times
+//            if(quantity>numberOfNeedWeight){
+//                if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
+//                    onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
+//                }
+//                else{
+//
+//                        onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*(quantity-numberOfSaleWeight);
+//
+//                }
+//                onSaleProduct = new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
+//                allPurchasedProducts.add(onSaleProduct);
+//                theTotalOfPurchasedPrice += onSalePrice;
+//                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
+//            }
+            onSalePrice = 0;
+            while(quantity>0){
+                if(quantity>numberOfNeedWeight){
+                    if((quantity-numberOfNeedWeight)<=numberOfSaleWeight){
+                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*(quantity-numberOfNeedWeight) + originalPrice*numberOfNeedWeight;
+                        quantity = 0;
+                    }
+                    else{
+                        onSalePrice += originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*numberOfNeedWeight;
+                        quantity = quantity-numberOfNeedWeight-numberOfSaleWeight;
+                    }
                 }
                 else{
-                    onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*(quantity-numberOfSaleWeight);
+                    onSalePrice += originalPrice*quantity;
+                    quantity = 0;
                 }
-                onSaleProduct = new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
-                allPurchasedProducts.add(onSaleProduct);
-                theTotalOfPurchasedPrice += onSalePrice;
-                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
             }
+            onSaleProduct = new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
+            allPurchasedProducts.add(onSaleProduct);
+            theTotalOfPurchasedPrice += onSalePrice;
+            return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
         }
         return getThePriceAfterApplyTheMarkdown(productName, quantity, allTheProductsInStore);
     }
@@ -121,8 +145,7 @@ public class CheckOut {
             int numberOfOriginalPrice = buyNItemsGetMAtXOff[0];
             int numberOfSalePrice = buyNItemsGetMAtXOff[1];
             int percentOfDiscount = buyNItemsGetMAtXOff[2];
-            double onSalePrice = (allTheProductsInStore.get(productName).getProductPrice()
-                    - allTheProductsInStore.get(productName).getMarkdown())*percentOfDiscount/100;
+            double onSalePrice = originalPrice-originalPrice*percentOfDiscount/100.0;
             possibleProductToDeleteWithOnSalePrice = allPurchasedProducts.stream()
                                                     .filter(product->product.getProductName().equals(productName))
                                                     .filter(product->product.getProductPrice()==onSalePrice)
