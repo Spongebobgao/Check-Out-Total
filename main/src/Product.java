@@ -59,6 +59,11 @@ public class Product {
     public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
+    public Product(double quantity, String productName, double productPrice){
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.quantity = quantity;
+    }
     public Product(String productName, double productPrice, double markdown) {
         this.productName = productName;
         this.productPrice = productPrice;

@@ -28,7 +28,7 @@ public class CheckOut {
             }
             else{
                 onSalePrice = originalPrice-originalPrice*percentOfDiscount/100.0;
-                onSaleProduct = new Product(productName,onSalePrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
+                onSaleProduct = new Product(quantity,productName,onSalePrice*quantity);
                 allPurchasedProducts.add(onSaleProduct);
                 theTotalOfPurchasedPrice += onSalePrice*quantity;
                 return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
@@ -47,7 +47,7 @@ public class CheckOut {
             //else will reset each item price to M/N
             else {
                 double differenceAfterApplyTheBuyNForM = priceForNItems - originalPrice*(numberOfNeededItems-1);
-                onSaleProduct = new Product(productName, originalPrice, allTheProductsInStore.get(productName).getMarkdown());
+                onSaleProduct = new Product(quantity,productName, originalPrice);
                 allPurchasedProducts.add(onSaleProduct);
                 double salePrice = Math.round((double)priceForNItems / (double)numberOfNeededItems*100.0)/100.0;
                 allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName))
@@ -64,7 +64,7 @@ public class CheckOut {
             int limitNumberOfItems = buyNGetMFreeLimitX[2];
             if(alreadyPurchasedSameItemCount<limitNumberOfItems) {
                 if((alreadyPurchasedSameItemCount+1) % (numberOfItemsNeedToBuy+numberOfFreeItems)==0) {
-                    onSaleProduct = new Product(productName, 0, allTheProductsInStore.get(productName).getMarkdown());
+                    onSaleProduct = new Product(quantity, productName, 0);
                     allPurchasedProducts.add(onSaleProduct);
                     return Math.round(theTotalOfPurchasedPrice * 100.0) / 100.0;
                 }
@@ -83,7 +83,7 @@ public class CheckOut {
 //                        onSalePrice = originalPrice*numberOfSaleWeightDiscount/100.0*numberOfSaleWeight + originalPrice*(quantity-numberOfSaleWeight);
 //
 //                }
-//                onSaleProduct = new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
+//                onSaleProduct = new Product(quantity, productName, onSalePrice);
 //                allPurchasedProducts.add(onSaleProduct);
 //                theTotalOfPurchasedPrice += onSalePrice;
 //                return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
@@ -101,7 +101,7 @@ public class CheckOut {
         Product onSaleProduct;
         double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
                 - allTheProductsInStore.get(productName).getMarkdown();
-        onSaleProduct = new Product(productName,originalPrice*quantity, allTheProductsInStore.get(productName).getMarkdown()*quantity);
+        onSaleProduct = new Product(quantity,productName,originalPrice*quantity);
         allPurchasedProducts.add(onSaleProduct);
         theTotalOfPurchasedPrice += originalPrice*quantity;
         return Math.round(theTotalOfPurchasedPrice*100.0)/100.0;
@@ -129,7 +129,7 @@ public class CheckOut {
                 quantity = 0;
             }
         }
-        return new Product(productName, onSalePrice, allTheProductsInStore.get(productName).getMarkdown());
+        return new Product(quantity,productName, onSalePrice);
 
     }
 
