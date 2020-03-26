@@ -91,12 +91,13 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return productName.equals(product.productName);
+        return Double.compare(product.productPrice, productPrice) == 0 &&
+                productName.equals(product.productName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(productName);
+        return Objects.hash(productName, productPrice);
     }
 
     @Override
@@ -104,6 +105,7 @@ public class Product {
         return "Product{" +
                 "productName='" + productName + '\'' +
                 ", productPrice=" + productPrice +
+                ", quantity=" + quantity +
                 '}';
     }
 }

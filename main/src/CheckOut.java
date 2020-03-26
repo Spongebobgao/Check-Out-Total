@@ -7,6 +7,10 @@ public class CheckOut {
     private Map<String,Product> allTheProductsInStore = allTheProductsInStore();
     public static List<Product> allPurchasedProducts = new ArrayList<>();
 
+    public Map<String, Product> getAllTheProductsInStore() {
+        return allTheProductsInStore;
+    }
+
     public double getItemPrice(String productName, double quantity) {
         Product onSaleProduct;
         int[] buyNItemsGetMAtXOff = allTheProductsInStore.get(productName).getBuyNItemsGetMAtXOff();
@@ -109,6 +113,7 @@ public class CheckOut {
         int numberOfNeedWeight = buyNGetMOrLessXOff[0];
         int numberOfSaleWeight = buyNGetMOrLessXOff[1];
         int numberOfSaleWeightDiscount = buyNGetMOrLessXOff[2];
+        Product onSaleProduct = new Product(quantity,productName,0);
         double onSalePrice = 0;
         //while loop will apply discount multiple times
         while(quantity>0){
@@ -127,7 +132,8 @@ public class CheckOut {
                 quantity = 0;
             }
         }
-        return new Product(quantity,productName, onSalePrice);
+        onSaleProduct.setProductPrice(onSalePrice);
+        return onSaleProduct;
 
     }
 
@@ -138,10 +144,12 @@ public class CheckOut {
         //the original price with or without markdown
         double originalPrice = allTheProductsInStore.get(productName).getProductPrice()
                 - allTheProductsInStore.get(productName).getMarkdown();
+        //if the product is not on sale
         Optional<Product> possibleProductToDeleteWithOriginalPrice = allPurchasedProducts.stream()
                                                                         .filter(product -> product.getProductName().equals(productName))
                                                                         .filter(product -> product.getProductPrice()==originalPrice)
                                                                         .findFirst();
+        //if the product is on sale
         Optional<Product> possibleProductToDeleteWithOnSalePrice;
         long alreadyPurchasedSameItemCount = allPurchasedProducts.stream().filter(product -> product.getProductName().equals(productName)).count();
         int[] buyNItemsGetMAtXOff = allTheProductsInStore.get(productName).getBuyNItemsGetMAtXOff();
@@ -201,7 +209,7 @@ public class CheckOut {
             int numberOfFreeItems = buyNGetMFreeLimitX[1];
             int limitNumberOfItems = buyNGetMFreeLimitX[2];
             if(alreadyPurchasedSameItemCount % (numberOfFreeItems + numberOfItemsNeedToBuy) ==0
-                                           && alreadyPurchasedSameItemCount <=limitNumberOfItems){
+                                           && alreadyPurchasedSameItemCount <= limitNumberOfItems){
                 possibleProductToDeleteWithOnSalePrice = allPurchasedProducts.stream()
                                                         .filter(product -> product.getProductName().equals(productName))
                                                         .filter(product -> product.getProductPrice()==0)
