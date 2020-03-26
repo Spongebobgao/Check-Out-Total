@@ -9,7 +9,10 @@ import java.util.Scanner;
 public class CheckOutTotal {
      public static void main(String[] args) throws IOException {
          CheckOut checkOut = new CheckOut();
-         File file = new File("main/src/input.txt");
+         System.out.println("Please enter the test file path: ");
+         Scanner readPath = new Scanner(System.in);
+         String filePath = readPath.nextLine();
+         File file = new File(filePath);
          BufferedReader reader = new BufferedReader(new FileReader(file));
          String itemInfo = reader.readLine();
          Scanner scanner = new Scanner(itemInfo);
