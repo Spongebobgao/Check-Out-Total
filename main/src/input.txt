@@ -1,4 +1,4 @@
-scan soup 1 2.26
+scan soup 1 2.26 (this number is the current total)
 scan soup 1 4.52
 void rice 1 4.52
 scan pasta 1 5.72
