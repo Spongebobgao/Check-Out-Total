@@ -30,9 +30,9 @@ scan  rice 1 77.11
 scan  rice 1 87.1
 scan  rice 1 87.12
 scan  banana 2.6 88.68
-scan  banana 11.6 95.04
-void  soup 1 92.78
-void  pasta 1 91.58
+scan  banana 11.6 94.44
+void  soup 1 92.18
+void  pasta 1 90.98
 void  banana 11.6 85.22
 void  egg 1 83.72
 void  egg 1 82.22
