@@ -34,6 +34,6 @@ You can clone this repo first, but only the source folder is needed.
 <pre>git clone https://github.com/Spongebobgao/check-out-total.git</pre>
 <pre>cd check-out-total/main</pre>
 Then compile and run:
-<pre>javac src/Product.java src/CheckOut.java src/CheckOutTotal.java</pre>
-<pre>java src/CheckOutTotal</pre>
+<pre>javac src/SaleType.java src/Special.java src/Product.java src/AllProductsInStore src/ScanOnSaleProduct src/VoidOnSaleProduct src/CheckOut.java src/Main.java</pre>
+<pre>java src/Main</pre>
 When you see the prompt, please enter the file path to test the scan and void method.
